@@ -22,12 +22,40 @@ enum UserRole {
   MANAGER
 }
 
+type EmergencyContact {
+  name  String
+  phone String
+  address String
+  relation String
+}
+
+type BankDetails {
+  bankName String
+  accountNumber String
+  accountName String
+  branch String
+  routingNumber String
+}
+
+type Education {
+  highestDegree String
+  university String
+  graduationYear Int
+
+}
+
 
 
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   email     String   @unique
   name      String?
+  passwordHash String
+  profileImage String?
+  emergencyContact EmergencyContact?
+  skills   String[]
+  bankDetails BankDetails?
+  education Education?
   phone     String?
   address   String?
   role      UserRole
