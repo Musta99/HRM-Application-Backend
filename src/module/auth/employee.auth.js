@@ -1,6 +1,7 @@
 import prisma from "../../prisma-client/prismaClient.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { uploadToCloudinary } from "../../utils/file_upload.js";
 
 // SignUp user
 const signUpUser = async (req, res) => {
@@ -69,31 +70,36 @@ const loginUser = async (req, res) => {
 // Update User Details
 const updateUserDetails = async (req, res) => {
   try {
-    // const {
-    //   name,
-    //   profileImage,
-    //   phone,
-    //   address,
-    //   emergencyContact,
-    //   skills,
-    //   bankDetails,
-    //   education,
-    //   department,
-    //   reportingBoss,
-    // } = req.body;
+    const {
+      name,
+      phone,
+      address,
+      emergencyContact,
+      skills,
+      bankDetails,
+      education,
+      department,
+      reportingBoss,
+    } = req.body;
 
     const userId = req.params.id;
+    // Image saved to local server by multer middleware
+    const profileImagePath = req.files?.profileImage[0]?.path;
 
-    console.log("Authenticated User ID:", userId);
+    if (profileImagePath) {
+      const uploadResult = await uploadToCloudinary(profileImagePath);
+    }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: req.body,
-    });
+    console.log(uploadResult.url);
 
-    return res
-      .status(200)
-      .json({ message: "User details updated", user: updatedUser });
+    // const updatedUser = await prisma.user.update({
+    //   where: { id: userId },
+    //   data: req.body,
+    // });
+
+    // return res
+    //   .status(200)
+    //   .json({ message: "User details updated", user: updatedUser });
   } catch (err) {
     return res.status(500).json({ error: "Internal server error" });
   }
