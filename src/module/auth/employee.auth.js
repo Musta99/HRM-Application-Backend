@@ -83,24 +83,39 @@ const updateUserDetails = async (req, res) => {
     } = req.body;
 
     const userId = req.params.id;
+
+    const updatedData = {
+      name,
+      phone,
+      address,
+      emergencyContact,
+      skills,
+      bankDetails,
+      education,
+      department,
+      reportingBoss,
+    };
     // Image saved to local server by multer middleware
     const profileImagePath = req.files?.profileImage[0]?.path;
 
     if (profileImagePath) {
       const uploadResult = await uploadToCloudinary(profileImagePath);
+      if (uploadResult) {
+        console.log(uploadResult.url);
+        updatedData.profileImage = uploadResult.url;
+      }
     }
 
-    console.log(uploadResult.url);
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: updatedData,
+    });
 
-    // const updatedUser = await prisma.user.update({
-    //   where: { id: userId },
-    //   data: req.body,
-    // });
-
-    // return res
-    //   .status(200)
-    //   .json({ message: "User details updated", user: updatedUser });
+    return res
+      .status(200)
+      .json({ message: "User details updated", user: updatedUser });
   } catch (err) {
+    console.error("Update error:", err);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

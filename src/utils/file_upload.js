@@ -18,7 +18,7 @@ const uploadToCloudinary = async (filePath) => {
       resource_type: "auto",
       folder: "hrm_application_profileImages",
     });
-    console.log("Printing the response", response);
+    console.log("Printing the response: ", response);
     // file has been successfully uploaded,
     console.log("File uploaded to Cloudinary successfully");
     return response;
