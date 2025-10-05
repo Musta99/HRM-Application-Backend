@@ -66,6 +66,39 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Update User Details
+const updateUserDetails = async (req, res) => {
+  try {
+    // const {
+    //   name,
+    //   profileImage,
+    //   phone,
+    //   address,
+    //   emergencyContact,
+    //   skills,
+    //   bankDetails,
+    //   education,
+    //   department,
+    //   reportingBoss,
+    // } = req.body;
+
+    const userId = req.params.id;
+
+    console.log("Authenticated User ID:", userId);
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: req.body,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "User details updated", user: updatedUser });
+  } catch (err) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 // const createNewUser = async (req, res) => {
 //   const { name, email, phone, address, role, department, reportingBoss } =
 //     req.body;
@@ -88,4 +121,4 @@ const loginUser = async (req, res) => {
 //   console.log(name);
 // };
 
-export { signUpUser, loginUser };
+export { signUpUser, loginUser, updateUserDetails };
