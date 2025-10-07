@@ -84,6 +84,8 @@ const updateUserDetails = async (req, res) => {
 
     const userId = req.params.id;
 
+    console.log("User Name from Body:", name);
+
     const updatedData = {
       name,
       phone,
@@ -96,7 +98,7 @@ const updateUserDetails = async (req, res) => {
       reportingBoss,
     };
     // Image saved to local server by multer middleware
-    const profileImagePath = req.files?.profileImage[0]?.path;
+    const profileImagePath = req.files?.profileImage?.[0]?.path;
 
     if (profileImagePath) {
       const uploadResult = await uploadToCloudinary(profileImagePath);
@@ -119,27 +121,5 @@ const updateUserDetails = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
-// const createNewUser = async (req, res) => {
-//   const { name, email, phone, address, role, department, reportingBoss } =
-//     req.body;
-
-//           if (!name || !email || !phone || !address || !role || !department) {
-//               return res.status(400).json({ error: "All fields are required" });
-//           }
-//     const newUser =  await prisma.user.create({
-//       data: {
-//         name,
-//         email,
-//         phone,
-//         address,
-//         role,
-//         department,
-//         reportingBoss: null,
-//       },
-//     });
-
-//   console.log(name);
-// };
 
 export { signUpUser, loginUser, updateUserDetails };
