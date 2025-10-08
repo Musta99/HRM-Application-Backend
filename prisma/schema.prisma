@@ -14,6 +14,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// --------------------------------------
+// ENUMS
+// --------------------------------------
+
 enum UserRole {
   SUPER_ADMIN
   ADMIN
@@ -21,6 +25,24 @@ enum UserRole {
   HR
   MANAGER
 }
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LeaveType {
+  SICK
+  CASUAL
+  ANNUAL
+  MATERNITY
+  UNPAID
+  OTHER
+}
+
+// --------------------------------------
+// EMBEDDED TYPES
+// --------------------------------------
 
 type EmergencyContact {
   name  String
@@ -45,6 +67,9 @@ type Education {
 }
 
 
+// --------------------------------------
+// MODELS Users
+// --------------------------------------
 
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -63,4 +88,29 @@ model User {
   reportingBoss String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  leaveRequests LeaveRequest[] @relation("EmployeeLeaveRequests") 
+  approvals     LeaveRequest[] @relation("ManagerApprovedLeaves")
 }
+
+
+
+// --------------------------------------
+// Leave Request Model
+// --------------------------------------
+ model LeaveRequest{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  employee  User     @relation("EmployeeLeaveRequests", fields: [userId], references: [id]) 
+  manager   User?    @relation("ManagerApprovedLeaves", fields: [managerId], references: [id])
+  managerId String?  @db.ObjectId
+  leaveType String
+  startDate DateTime
+  endDate   DateTime?
+  reason    String
+  supportingDocument String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ }

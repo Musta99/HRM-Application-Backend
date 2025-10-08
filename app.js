@@ -4,6 +4,7 @@ import cors from "cors";
 
 import employeeRoutes from "./src/module/auth/employee.routes.js";
 import userRoutes from "./src/module/user/users.routes.js";
+import leaveRoutes from "./src/module/leave/leave.routes.js";
 
 dotenv.config();
 const app = express();
@@ -18,5 +19,8 @@ app.use("/api/employees", employeeRoutes);
 
 // User Routes
 app.use("/api/users", userRoutes);
+
+// Leave Request Routes
+app.use("/api/leaves", leaveRoutes);
 
 export default app;
