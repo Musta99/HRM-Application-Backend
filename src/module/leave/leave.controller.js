@@ -11,11 +11,11 @@ const createLeaveRequest = async (req, res) => {
     }
 
     // Handle file upload if there's a supporting document
-    const docPath = req.file ? req.file.path : null;
+    const docPath = req.files?.supportingDocument?.[0]?.path;
 
     console.log("File path:", docPath);
     if (docPath) {
-      const uploadResult = await uploadToCloudinary(req.file.path);
+      const uploadResult = await uploadToCloudinary(docPath);
       supportingDocumentUrl = uploadResult.url;
     }
 
