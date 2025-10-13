@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authMiddleware } from "../../middleware/authMiddleware.js";
-import { createLeaveRequest } from "./leave.controller.js";
+import { createLeaveRequest, viewLeaveRequest } from "./leave.controller.js";
 import { upload } from "../../middleware/multer.middleware.js";
 
 const router = Router();
@@ -16,5 +16,7 @@ router.post(
   ]),
   createLeaveRequest
 );
+
+router.get("/:managerId", viewLeaveRequest);
 
 export default router;
