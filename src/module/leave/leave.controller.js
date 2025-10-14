@@ -85,30 +85,27 @@ const viewLeaveRequest = async (req, res) => {
 
 // View leave applied by Employee
 const leaveAppliedByEmployee = async (req, res) => {
-  const { userId } = req.params;
+  const userId = req.user.id;
   const { leaveStatus, leaveType } = req.query;
-  console.log(userId);
+  console.log("User Id of the", userId);
   console.log("Leave Status", leaveStatus);
 
   try {
-    // if (!userId) {
-    //   return res.status(500).json({
-    //     message: "No User Id provided",
-    //   });
-    // }
 
-    if (!leaveStatus || !leaveType) {
-      const appliedLeaves = await prisma.leaveRequest.findMany();
-      return res.status(200).json({
-        message: "Fetched Applied Leave Data",
-        data: appliedLeaves,
-      });
+    let filters = {
+      userId: userId,
+    };
+
+    if (leaveStatus) {
+      filters.status = leaveStatus;
+    }
+    if (leaveType) {
+      filters.leaveType = leaveType;
     }
 
+    console.log(filters);
     const filteredLeaves = await prisma.leaveRequest.findMany({
-      where: {
-        status: leaveStatus,
-      },
+      where: filters,
     });
 
     return res.status(200).json({
