@@ -6,6 +6,7 @@ const createLeaveRequest = async (req, res) => {
   try {
     const { userId, startDate, endDate, reason, leaveType } = req.body;
     let supportingDocumentUrl = null;
+
     if (!userId || !startDate || !reason || !leaveType) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -16,9 +17,15 @@ const createLeaveRequest = async (req, res) => {
       const uploadResult = await uploadToCloudinary(docPath);
       supportingDocumentUrl = uploadResult.url;
     }
-    // Find user's manager automatically (optional)
+    // Find user's manager automatically
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    const managerId = user?.reportingBoss || null;
+    // Check if employee has added manager to his profile or not
+    if (!user.reportingBoss) {
+      return res.status(500).json({
+        message: "Please add a manager to your profile to apply for leave",
+      });
+    }
+
     const newLeaveRequest = await prisma.leaveRequest.create({
       data: {
         startDate: new Date(startDate),

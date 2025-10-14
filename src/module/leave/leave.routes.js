@@ -17,6 +17,6 @@ router.post(
   createLeaveRequest
 );
 
-router.get("/:managerId", viewLeaveRequest);
+router.get("/:managerId", authMiddleware, viewLeaveRequest);
 
 export default router;
