@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { authMiddleware } from "../../middleware/authMiddleware.js";
-import { createLeaveRequest, viewLeaveRequest } from "./leave.controller.js";
+import {
+  createLeaveRequest,
+  viewLeaveRequest,
+  leaveAppliedByEmployee,
+} from "./leave.controller.js";
 import { upload } from "../../middleware/multer.middleware.js";
 
 const router = Router();
@@ -17,6 +21,7 @@ router.post(
   createLeaveRequest
 );
 
+router.get("/getEmployeeLeaves", authMiddleware, leaveAppliedByEmployee);
 router.get("/:managerId", authMiddleware, viewLeaveRequest);
 
 export default router;

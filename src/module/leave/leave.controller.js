@@ -64,7 +64,7 @@ const createLeaveRequest = async (req, res) => {
   }
 };
 
-// View leave request for employee
+// View leave request for manager
 const viewLeaveRequest = async (req, res) => {
   const { managerId } = req.params;
   console.log(managerId);
@@ -83,4 +83,42 @@ const viewLeaveRequest = async (req, res) => {
   }
 };
 
-export { createLeaveRequest, viewLeaveRequest };
+// View leave applied by Employee
+const leaveAppliedByEmployee = async (req, res) => {
+  const { userId } = req.params;
+  const { leaveStatus, leaveType } = req.query;
+  console.log(userId);
+  console.log("Leave Status", leaveStatus);
+
+  try {
+    // if (!userId) {
+    //   return res.status(500).json({
+    //     message: "No User Id provided",
+    //   });
+    // }
+
+    if (!leaveStatus || !leaveType) {
+      const appliedLeaves = await prisma.leaveRequest.findMany();
+      return res.status(200).json({
+        message: "Fetched Applied Leave Data",
+        data: appliedLeaves,
+      });
+    }
+
+    const filteredLeaves = await prisma.leaveRequest.findMany({
+      where: {
+        status: leaveStatus,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Filtered Leaved fetched successfully",
+      data: filteredLeaves,
+    });
+  } catch (err) {
+    console.log("Error fetching leave request:", err);
+    return res.status(500).json({ err: "Internal server error" });
+  }
+};
+
+export { createLeaveRequest, viewLeaveRequest, leaveAppliedByEmployee };
