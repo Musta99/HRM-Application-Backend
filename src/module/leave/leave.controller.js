@@ -89,25 +89,20 @@ const leaveAppliedByEmployee = async (req, res) => {
   const { leaveStatus, leaveType } = req.query;
   console.log("User Id of the", userId);
   console.log("Leave Status", leaveStatus);
-
   try {
-
     let filters = {
       userId: userId,
     };
-
     if (leaveStatus) {
       filters.status = leaveStatus;
     }
     if (leaveType) {
       filters.leaveType = leaveType;
     }
-
     console.log(filters);
     const filteredLeaves = await prisma.leaveRequest.findMany({
       where: filters,
     });
-
     return res.status(200).json({
       message: "Filtered Leaved fetched successfully",
       data: filteredLeaves,
@@ -118,4 +113,40 @@ const leaveAppliedByEmployee = async (req, res) => {
   }
 };
 
-export { createLeaveRequest, viewLeaveRequest, leaveAppliedByEmployee };
+// Update leave status --> Manager can approve/reject leave, applied by employee
+const updateLeaveStatus = async (req, res) => {
+  const { leaveId } = req.params;
+  const managerId = req.user.id;
+
+  const { status } = req.body;
+
+  const updateData = {
+    status,
+  };
+  const leave = await prisma.leaveRequest.findUnique({
+    where: { id: new ObjectId(leaveId) },
+  });
+  if (leave.managerId !== managerId) {
+    return req.status(400).json({
+      message: "You are not authorized manager to approve the leave",
+    });
+  }
+  const updatedLeave = await prisma.leaveRequest.update({
+    where: {
+      id: new ObjectId(leaveId),
+    },
+    data: updateData,
+  });
+  console.log("Leave", updatedLeave);
+  res.status(200).json({
+    message: "Successfully fetched",
+    data: updatedLeave,
+  });
+};
+
+export {
+  createLeaveRequest,
+  viewLeaveRequest,
+  leaveAppliedByEmployee,
+  updateLeaveStatus,
+};

@@ -4,6 +4,7 @@ import {
   createLeaveRequest,
   viewLeaveRequest,
   leaveAppliedByEmployee,
+  updateLeaveStatus,
 } from "./leave.controller.js";
 import { upload } from "../../middleware/multer.middleware.js";
 
@@ -23,5 +24,6 @@ router.post(
 
 router.get("/getEmployeeLeaves", authMiddleware, leaveAppliedByEmployee);
 router.get("/:managerId", authMiddleware, viewLeaveRequest);
+router.get("/updateLeaveStatus/:leaveId", authMiddleware, updateLeaveStatus);
 
 export default router;
