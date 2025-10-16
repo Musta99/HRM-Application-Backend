@@ -57,7 +57,7 @@ const createNewTask = async (req, res) => {
       },
     });
 
-    return res.status(200).json({
+    return res.status(201).json({
       message: "Your task has been successfully added",
       data: task,
     });
@@ -101,20 +101,14 @@ const updateTaskStatus = async (req, res) => {
     const { taskId } = req.params;
     const { status } = req.body;
     const userId = req.user.id;
-
-    console.log("Task Id: ", taskId);
-    console.log("User Id: ", userId);
-
     const updatedData = {
       status,
     };
-
     if (!userId) {
       return res.status(400).json({
         message: "No user id found",
       });
     }
-
     const task = await prisma.taskManagement.update({
       where: {
         id: new ObjectId(taskId),
@@ -122,7 +116,6 @@ const updateTaskStatus = async (req, res) => {
       },
       data: updatedData,
     });
-
     return res.status(200).json({
       message: "Successfully updated the status of that task",
       data: task,
@@ -133,4 +126,48 @@ const updateTaskStatus = async (req, res) => {
   }
 };
 
-export { createNewTask, fetchTasksByUser, updateTaskStatus };
+// View alll tasks by a Manager of his entire team
+const fetchTasksByManager = async (req, res) => {
+  try {
+    const { status, userId } = req.query;
+    const managerId = req.user.id;
+    console.log("Manager Id: ", managerId);
+
+    let filters = {
+      managerId: new ObjectId(managerId),
+    };
+
+    if (status) {
+      filters.status = status;
+    }
+
+    if (userId) {
+      filters.userId = userId;
+    }
+
+    const fetchAllTasksByManager = await prisma.taskManagement.findMany({
+      where: filters,
+    });
+
+    if (!fetchAllTasksByManager || fetchAllTasksByManager.length === 0) {
+      return res.status(400).json({
+        message: "No data found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Successfully fetched all the tasks by manager",
+      data: fetchAllTasksByManager,
+    });
+  } catch (err) {
+    console.log("Error creating leave request:", err);
+    return res.status(500).json({ err: "Internal server error" });
+  }
+};
+
+export {
+  createNewTask,
+  fetchTasksByUser,
+  updateTaskStatus,
+  fetchTasksByManager,
+};
