@@ -40,6 +40,14 @@ enum LeaveType {
   OTHER
 }
 
+
+enum TaskStatus{
+  TODO
+  WAITING
+  IN_PROGRESS
+  COMPLETED
+}
+
 // --------------------------------------
 // EMBEDDED TYPES
 // --------------------------------------
@@ -92,6 +100,8 @@ model User {
   // Relations
   leaveRequests LeaveRequest[] @relation("EmployeeLeaveRequests") 
   approvals     LeaveRequest[] @relation("ManagerApprovedLeaves")
+  task          TaskManagement[] @relation("TaskCreation")
+  taskView      TaskManagement[] @relation("TaskViewManager")
 }
 
 
@@ -114,3 +124,26 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
  }
+
+
+// --------------------------------------
+// Task Management Model
+// --------------------------------------
+model TaskManagement{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  managerId String   @db.ObjectId
+  title     String
+  description String
+  status    String   @default("TODO") // TODO, PENDING, IN_PROGRESS, COMPLETED
+  priority  String   @default("LOW")  // LOW, MEDIUM, HIGH
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  // Relation
+  employee  User     @relation("TaskCreation", fields: [userId], references: [id])
+  manager   User     @relation("TaskViewManager", fields: [managerId], references: [id])
+  
+}
