@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import prisma from "../../prisma-client/prismaClient.js";
 
+// Create a new Task
 const createNewTask = async (req, res) => {
   try {
     const { title, description, status, priority, startDate, endDate } =
@@ -66,4 +67,32 @@ const createNewTask = async (req, res) => {
   }
 };
 
-export { createNewTask };
+// Fetch All Task for specific user
+const fetchTasksByUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId);
+
+    const tasksByUser = await prisma.taskManagement.findMany({
+      where: {
+        userId: new ObjectId(userId),
+      },
+    });
+
+    if (!tasksByUser) {
+      return res.status(400).json({
+        message: "No task found on this id",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Successfully fetched tasks",
+      data: tasksByUser,
+    });
+  } catch (err) {
+    console.log("Error creating leave request:", err);
+    return res.status(500).json({ err: "Internal server error" });
+  }
+};
+
+export { createNewTask, fetchTasksByUser };
