@@ -95,4 +95,42 @@ const fetchTasksByUser = async (req, res) => {
   }
 };
 
-export { createNewTask, fetchTasksByUser };
+// update Tasks status by user
+const updateTaskStatus = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const { status } = req.body;
+    const userId = req.user.id;
+
+    console.log("Task Id: ", taskId);
+    console.log("User Id: ", userId);
+
+    const updatedData = {
+      status,
+    };
+
+    if (!userId) {
+      return res.status(400).json({
+        message: "No user id found",
+      });
+    }
+
+    const task = await prisma.taskManagement.update({
+      where: {
+        id: new ObjectId(taskId),
+        userId: new ObjectId(userId),
+      },
+      data: updatedData,
+    });
+
+    return res.status(200).json({
+      message: "Successfully updated the status of that task",
+      data: task,
+    });
+  } catch (err) {
+    console.log("Error creating leave request:", err);
+    return res.status(500).json({ err: "Internal server error" });
+  }
+};
+
+export { createNewTask, fetchTasksByUser, updateTaskStatus };
