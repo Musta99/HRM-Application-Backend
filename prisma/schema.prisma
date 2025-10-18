@@ -174,9 +174,9 @@ model LoanManagement{
   loanAmount Float 
   emiAmount  Float 
   reason    String
-  disbursementDate  DateTime
-  emiStartDate DateTime
-  emiEndDate   DateTime
+  disbursementDate  DateTime?
+  emiStartDate DateTime?
+  emiEndDate   DateTime?
   status    LoanStatus @default(PENDING)
   totalPaid         Float  @default(0.00)
   remainingBalance  Float  @default(0.00)
