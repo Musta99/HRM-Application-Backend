@@ -40,12 +40,25 @@ enum LeaveType {
   OTHER
 }
 
-
-enum TaskStatus{
+enum TaskStatus {
   TODO
   WAITING
   IN_PROGRESS
   COMPLETED
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  DISBURSED
+  COMPLETED
+}
+
+enum EMIStatus {
+  PENDING
+  PAID
+  OVERDUE
 }
 
 // --------------------------------------
@@ -102,6 +115,8 @@ model User {
   approvals     LeaveRequest[] @relation("ManagerApprovedLeaves")
   task          TaskManagement[] @relation("TaskCreation")
   taskView      TaskManagement[] @relation("TaskViewManager")
+  loanRequest   LoanManagement[] @relation("LoanCreation")
+  loanApproval  LoanManagement[] @relation("LoanApproval")
 }
 
 
@@ -145,5 +160,47 @@ model TaskManagement{
   // Relation
   employee  User     @relation("TaskCreation", fields: [userId], references: [id])
   manager   User     @relation("TaskViewManager", fields: [managerId], references: [id])
-  
+
 }
+
+// --------------------------------------
+// Loan Management Model
+// --------------------------------------
+model LoanManagement{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  managerId String   @db.ObjectId
+  loanTenure Int
+  loanAmount Float 
+  emiAmount  Float 
+  reason    String
+  disbursementDate  DateTime
+  emiStartDate DateTime
+  emiEndDate   DateTime
+  status    LoanStatus @default(PENDING)
+  totalPaid         Float  @default(0.00)
+  remainingBalance  Float  @default(0.00)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relation
+  emis       LoanEmi[] @relation("LoanEmi")
+  employee   User      @relation("LoanCreation", fields: [userId], references: [id])
+  manager    User      @relation("LoanApproval", fields: [managerId], references: [id])
+
+}  
+
+
+model LoanEmi{
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  loanId    String   @db.ObjectId
+  dueDate   DateTime
+  amount    Float
+  paidDate  DateTime?
+  status    EMIStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  loan      LoanManagement  @relation("LoanEmi", fields: [loanId], references: [id])
+
+}
+
