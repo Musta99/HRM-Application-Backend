@@ -72,4 +72,28 @@ const createLoanRequest = async (req, res) => {
   }
 };
 
-export { createLoanRequest };
+// View Loan Request for employee
+const viewLoanRequestEmployee = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log("User Id is: ", userId);
+
+    const loans = await prisma.loanManagement.findMany({
+      where: {
+        userId: new ObjectId(userId),
+      },
+    });
+
+    return res.status(200).json({
+      messages: "Successfully fetched Data",
+      data: loans,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
+export { createLoanRequest, viewLoanRequestEmployee };
