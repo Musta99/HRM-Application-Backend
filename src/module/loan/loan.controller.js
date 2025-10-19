@@ -76,28 +76,18 @@ const createLoanRequest = async (req, res) => {
 const viewLoanRequestEmployee = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { loanId } = req.params;
-    console.log("User Id is: ", userId);
-    console.log("Loan Id is: ", loanId);
+    const { status } = req.query;
 
-    if (loanId) {
-      const loans = await prisma.loanManagement.findUnique({
-        where: {
-          userId: new ObjectId(userId),
-          _id: new ObjectId(loanId),
-        },
-      });
+    let filters = {
+      userId: new ObjectId(userId),
+    };
 
-      return res.status(200).json({
-        messages: "Successfully fetched Data",
-        data: loans,
-      });
+    if (status) {
+      filters.status = status;
     }
 
     const loans = await prisma.loanManagement.findMany({
-      where: {
-        userId: new ObjectId(userId),
-      },
+      where: filters,
     });
 
     return res.status(200).json({
