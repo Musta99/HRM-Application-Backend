@@ -6,6 +6,7 @@ import employeeRoutes from "./src/module/auth/employee.routes.js";
 import userRoutes from "./src/module/user/users.routes.js";
 import leaveRoutes from "./src/module/leave/leave.routes.js";
 import taskRoutes from "./src/module/task/task.routes.js";
+import loanRoutes from "./src/module/loan/loan.routes.js";
 
 dotenv.config();
 const app = express();
@@ -26,5 +27,8 @@ app.use("/api/leaves", leaveRoutes);
 
 // Task Management Route
 app.use("/api/tasks", taskRoutes);
+
+// Loan Managemnent Routes
+app.use("/api/loans", loanRoutes);
 
 export default app;
