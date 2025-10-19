@@ -76,7 +76,23 @@ const createLoanRequest = async (req, res) => {
 const viewLoanRequestEmployee = async (req, res) => {
   try {
     const userId = req.user.id;
+    const { loanId } = req.params;
     console.log("User Id is: ", userId);
+    console.log("Loan Id is: ", loanId);
+
+    if (loanId) {
+      const loans = await prisma.loanManagement.findUnique({
+        where: {
+          userId: new ObjectId(userId),
+          _id: new ObjectId(loanId),
+        },
+      });
+
+      return res.status(200).json({
+        messages: "Successfully fetched Data",
+        data: loans,
+      });
+    }
 
     const loans = await prisma.loanManagement.findMany({
       where: {
@@ -96,4 +112,33 @@ const viewLoanRequestEmployee = async (req, res) => {
   }
 };
 
-export { createLoanRequest, viewLoanRequestEmployee };
+// Fetch loan request by Id for Employee
+const viewLoanRequestByIdEmployee = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { loanId } = req.params;
+
+    const loans = await prisma.loanManagement.findUnique({
+      where: {
+        userId: new ObjectId(userId),
+        id: new ObjectId(loanId),
+      },
+    });
+
+    return res.status(200).json({
+      messages: "Successfully fetched Data",
+      data: loans,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
+export {
+  createLoanRequest,
+  viewLoanRequestEmployee,
+  viewLoanRequestByIdEmployee,
+};
