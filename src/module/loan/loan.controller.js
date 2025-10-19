@@ -127,8 +127,42 @@ const viewLoanRequestByIdEmployee = async (req, res) => {
   }
 };
 
+// Update Loan Status by Manager -- Manager can approve, reject loan request
+const updateLoanStatusByManager = async (req, res) => {
+  try {
+    const managerId = req.user.id;
+    const { status } = req.body;
+    const { loanId } = req.params;
+
+    console.log(managerId, status, loanId);
+
+    const updatedData = {
+      status,
+    };
+
+    const updatedLoanStatus = await prisma.loanManagement.update({
+      where: {
+        managerId: new ObjectId(managerId),
+        id: new ObjectId(loanId),
+      },
+      data: updatedData,
+    });
+
+    return res.status(200).json({
+      message: `Loan Status has been ${status}`,
+      data: updatedLoanStatus,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
 export {
   createLoanRequest,
   viewLoanRequestEmployee,
   viewLoanRequestByIdEmployee,
+  updateLoanStatusByManager,
 };
