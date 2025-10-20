@@ -24,6 +24,7 @@ enum UserRole {
   EMPLOYEE
   HR
   MANAGER
+  ACCOUNTS
 }
 enum LeaveStatus {
   PENDING

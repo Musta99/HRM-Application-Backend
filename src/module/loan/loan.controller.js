@@ -160,9 +160,52 @@ const updateLoanStatusByManager = async (req, res) => {
   }
 };
 
+// Loan Disburse by Account Department
+const loanDisbursementByAccounts = async (req, res) => {
+  try {
+    const today = new Date();
+    const currentDate = today.getDate();
+    const currentMonth = today.getMonth() + 1;
+    const currentYear = today.getFullYear();
+
+    if (currentDate > 5) {
+      console.log("your loan emi will start from the next month");
+    } else {
+      console.log("your loan emi will start from this month");
+    }
+    // const userId = req.user.id;
+
+    // console.log("User Id is: ", userId);
+
+    // const user = await prisma.user.findUnique({
+    //   where: {
+    //     id: new ObjectId(userId),
+    //   },
+    // });
+
+    // if (user.role !== "ACCOUNTS") {
+    //   return res.status(400).json({
+    //     message: "You are not authorised for this operation",
+    //   });
+    // }
+
+    // i
+
+    // const disburseLoan = await prisma.loanManagement.update({
+
+    // })
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
 export {
   createLoanRequest,
   viewLoanRequestEmployee,
   viewLoanRequestByIdEmployee,
   updateLoanStatusByManager,
+  loanDisbursementByAccounts,
 };
