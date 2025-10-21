@@ -5,6 +5,7 @@ import {
   viewLoanRequestEmployee,
   viewLoanRequestByIdEmployee,
   updateLoanStatusByManager,
+  viewLoanRequestToAccounts,
   loanDisbursementByAccounts,
 } from "../loan/loan.controller.js";
 
@@ -14,6 +15,7 @@ router.post("/", authMiddleware, createLoanRequest);
 router.get("/", authMiddleware, viewLoanRequestEmployee);
 router.get("/getById/:loanId", authMiddleware, viewLoanRequestByIdEmployee);
 router.put("/updateStatus/:loanId", authMiddleware, updateLoanStatusByManager);
+router.get("/allLoanRequests", authMiddleware, viewLoanRequestToAccounts);
 router.put("/loanDisburse/:loanId", authMiddleware, loanDisbursementByAccounts);
 
 export default router;

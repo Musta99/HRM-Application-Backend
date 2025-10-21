@@ -127,6 +127,35 @@ const viewLoanRequestByIdEmployee = async (req, res) => {
   }
 };
 
+// View all the loan request to accounts department
+const viewLoanRequestToAccounts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await prisma.user.findUnique({
+      where: {
+        id: new ObjectId(userId),
+      },
+    });
+    if (user.role !== "ACCOUNTS") {
+      return res.status(400).json({
+        message: "You are not authorised for this operation",
+      });
+    }
+
+    const allLoanRequests = await prisma.loanManagement.findMany();
+
+    return res.status(200).json({
+      message: "All Loan Requests fetched successfully",
+      data: allLoanRequests,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
 // Update Loan Status by Manager -- Manager can approve, reject loan request
 const updateLoanStatusByManager = async (req, res) => {
   try {
@@ -164,6 +193,9 @@ const updateLoanStatusByManager = async (req, res) => {
 const loanDisbursementByAccounts = async (req, res) => {
   try {
     const { loanId } = req.params;
+    const userId = req.user.id;
+    console.log("User Id is: ", userId);
+
     // FIrst get the loan Tenure value from the databse using loanId
     const loanDetails = await prisma.loanManagement.findUnique({
       where: {
@@ -172,8 +204,16 @@ const loanDisbursementByAccounts = async (req, res) => {
     });
 
     const loanTenure = loanDetails.loanTenure;
+    const loanStatus = loanDetails.status;
 
-    // Calculate EMI Start date and end date accoridn=ing to disbursement date and loan tenurew
+    // Chacking if loan request is approved or not by manager
+    if (loanStatus === "PENDING") {
+      return res.status(400).json({
+        message: "Loan Request is not approved by manager yet",
+      });
+    }
+
+    // Calculate EMI Start date and end date accoridning to disbursement date and loan tenurew
     const today = new Date();
     console.log("Today's date: ", today);
     const currentDate = today.getDate();
@@ -215,9 +255,6 @@ const loanDisbursementByAccounts = async (req, res) => {
       }
       emiEndDate = new Date(emiEndYear, emiEndMonth, 6, 0, 0, 0, 0);
     }
-    const userId = req.user.id;
-
-    console.log("User Id is: ", userId);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -259,5 +296,6 @@ export {
   viewLoanRequestEmployee,
   viewLoanRequestByIdEmployee,
   updateLoanStatusByManager,
+  viewLoanRequestToAccounts,
   loanDisbursementByAccounts,
 };
