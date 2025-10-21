@@ -163,13 +163,49 @@ const updateLoanStatusByManager = async (req, res) => {
 // Loan Disburse by Account Department
 const loanDisbursementByAccounts = async (req, res) => {
   try {
+    const { loanId } = req.params;
+    // FIrst get the loan Tenure value from the databse using loanId
+    const loanDetails = await prisma.loanManagement.findUnique({
+      where: {
+        id: new ObjectId(loanId),
+      },
+    });
+
+    const loanTenure = loanDetails.loanTenure;
+
+    console.log(loanTenure);
+    // Calculate EMI Start date and end date accoridn=ing to disbursement date and loan tenurew
     const today = new Date();
     const currentDate = today.getDate();
-    const currentMonth = today.getMonth() + 1;
+    const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
 
+    let emiYear;
+    let emiMonth;
+    let emiEndYear;
+    let emiEndMonth;
+
     if (currentDate > 5) {
-      console.log("your loan emi will start from the next month");
+      if (currentMonth > 12) {
+        emiYear = currentYear + 1;
+        emiMonth = 0;
+      } else {
+        emiYear = currentYear;
+        emiMonth = currentMonth + 1;
+        console.log("EMI Start Month", emiMonth);
+      }
+
+      const emiStartDate = new Date(emiYear, emiMonth, 6, 0, 0, 0, 0);
+      console.log("your loan emi will start from the next month", emiStartDate);
+      const totalMonth = emiMonth + loanTenure;
+      if (totalMonth > 12) {
+        emiEndYear = emiYear + 1;
+        emiEndMonth = totalMonth - 12 - 1;
+        const emiEndDate = new Date(emiEndYear, emiEndMonth, 6, 0, 0, 0, 0);
+        console.log("EMI End Year", emiEndYear);
+        console.log("EMI End Month", emiEndMonth);
+        console.log("EMI End Date: ", emiEndDate);
+      }
     } else {
       console.log("your loan emi will start from this month");
     }

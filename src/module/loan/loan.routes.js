@@ -14,6 +14,6 @@ router.post("/", authMiddleware, createLoanRequest);
 router.get("/", authMiddleware, viewLoanRequestEmployee);
 router.get("/getById/:loanId", authMiddleware, viewLoanRequestByIdEmployee);
 router.put("/updateStatus/:loanId", authMiddleware, updateLoanStatusByManager);
-router.put("/loanDisburse", loanDisbursementByAccounts);
+router.put("/loanDisburse/:loanId", loanDisbursementByAccounts);
 
 export default router;
