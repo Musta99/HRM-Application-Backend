@@ -215,27 +215,37 @@ const loanDisbursementByAccounts = async (req, res) => {
       }
       emiEndDate = new Date(emiEndYear, emiEndMonth, 6, 0, 0, 0, 0);
     }
-    // const userId = req.user.id;
+    const userId = req.user.id;
 
-    // console.log("User Id is: ", userId);
+    console.log("User Id is: ", userId);
 
-    // const user = await prisma.user.findUnique({
-    //   where: {
-    //     id: new ObjectId(userId),
-    //   },
-    // });
+    const user = await prisma.user.findUnique({
+      where: {
+        id: new ObjectId(userId),
+      },
+    });
 
-    // if (user.role !== "ACCOUNTS") {
-    //   return res.status(400).json({
-    //     message: "You are not authorised for this operation",
-    //   });
-    // }
+    if (user.role !== "ACCOUNTS") {
+      return res.status(400).json({
+        message: "You are not authorised for this operation",
+      });
+    }
 
-    // i
+    const disburseLoan = await prisma.loanManagement.update({
+      where: {
+        id: new ObjectId(loanId),
+      },
+      data: {
+        disbursementDate: today,
+        emiStartDate,
+        emiEndDate,
+      },
+    });
 
-    // const disburseLoan = await prisma.loanManagement.update({
-
-    // })
+    return res.status(200).json({
+      message: "your loan request is accepted successfully",
+      data: disburseLoan,
+    });
   } catch (err) {
     console.log("Some Error occured", err);
     return res.status(500).json({
