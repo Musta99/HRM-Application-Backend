@@ -173,41 +173,47 @@ const loanDisbursementByAccounts = async (req, res) => {
 
     const loanTenure = loanDetails.loanTenure;
 
-    console.log(loanTenure);
     // Calculate EMI Start date and end date accoridn=ing to disbursement date and loan tenurew
     const today = new Date();
+    console.log("Today's date: ", today);
     const currentDate = today.getDate();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
 
-    let emiYear;
-    let emiMonth;
+    let emiStartYear;
+    let emiStartMonth;
     let emiEndYear;
+    let emiStartDate;
     let emiEndMonth;
+    let emiEndDate;
 
-    if (currentDate > 5) {
-      if (currentMonth > 12) {
-        emiYear = currentYear + 1;
-        emiMonth = 0;
-      } else {
-        emiYear = currentYear;
-        emiMonth = currentMonth + 1;
-        console.log("EMI Start Month", emiMonth);
-      }
-
-      const emiStartDate = new Date(emiYear, emiMonth, 6, 0, 0, 0, 0);
-      console.log("your loan emi will start from the next month", emiStartDate);
-      const totalMonth = emiMonth + loanTenure;
-      if (totalMonth > 12) {
-        emiEndYear = emiYear + 1;
-        emiEndMonth = totalMonth - 12 - 1;
-        const emiEndDate = new Date(emiEndYear, emiEndMonth, 6, 0, 0, 0, 0);
-        console.log("EMI End Year", emiEndYear);
-        console.log("EMI End Month", emiEndMonth);
-        console.log("EMI End Date: ", emiEndDate);
-      }
+    // Calculation of year, if month is greater than december, then new year will be added and month will be reset to January
+    if (currentMonth > 11) {
+      emiStartYear = currentYear + 1;
+      emiStartMonth = 0;
     } else {
-      console.log("your loan emi will start from this month");
+      emiStartYear = currentYear;
+      emiStartMonth = currentMonth + 1;
+    }
+    // Calculation EMI Start and End Date according to disbursement date
+    if (currentDate > 5) {
+      emiStartDate = new Date(emiStartYear, emiStartMonth, 6, 0, 0, 0, 0);
+      const totalMonth = emiStartMonth + loanTenure;
+      if (totalMonth > 11) {
+        emiEndYear = emiStartYear + 1;
+        emiEndMonth = totalMonth - 12 - 1;
+      }
+      emiEndDate = new Date(emiEndYear, emiEndMonth, 6, 0, 0, 0, 0);
+    } else {
+      emiStartDate = new Date(currentYear, currentMonth, 6, 0, 0, 0, 0);
+      const totalMonth = currentMonth + loanTenure;
+      console.log("Total Month: ", totalMonth);
+      console.log("EMI Start Year: ", emiStartYear);
+      if (totalMonth > 11) {
+        emiEndYear = emiStartYear + 1;
+        emiEndMonth = totalMonth - 12 - 1;
+      }
+      emiEndDate = new Date(emiEndYear, emiEndMonth, 6, 0, 0, 0, 0);
     }
     // const userId = req.user.id;
 
