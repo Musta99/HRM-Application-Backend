@@ -62,6 +62,12 @@ enum EMIStatus {
   OVERDUE
 }
 
+enum MovementLogStatus {
+  ACTIVE
+  COMPLETED
+  DELAYED
+}
+
 // --------------------------------------
 // EMBEDDED TYPES
 // --------------------------------------
@@ -118,6 +124,8 @@ model User {
   taskView      TaskManagement[] @relation("TaskViewManager")
   loanRequest   LoanManagement[] @relation("LoanCreation")
   loanApproval  LoanManagement[] @relation("LoanApproval")
+  movementLogCreator MovementLog[] @relation("movementLogCreator")
+  movementLogViewer  MovementLog[] @relation("movementLogViewer")
 }
 
 
@@ -204,4 +212,26 @@ model LoanEmi{
   loan      LoanManagement  @relation("LoanEmi", fields: [loanId], references: [id])
 
 }
+
+// --------------------------------------
+// Movement Log Model
+// --------------------------------------
+
+model MovementLog{
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @db.ObjectId
+  managerId String    @db.ObjectId
+  type      String
+  location  String
+  time      String
+  purpose   String
+  status    MovementLogStatus @default(ACTIVE)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  employee  User     @relation("movementLogCreator", fields: [userId], references: [id])
+  manager   User     @relation("movementLogViewer", fields: [managerId], references: [id])
+
+}
+
 
