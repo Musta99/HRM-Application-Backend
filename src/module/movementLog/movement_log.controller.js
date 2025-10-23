@@ -95,4 +95,37 @@ const viewMovementLog = async (req, res) => {
   }
 };
 
-export { createNewMovementLog, viewMovementLog };
+// update movement log by employee
+const updateMovementLog = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { movementLogId } = req.params;
+    const { status } = req.body;
+
+    const updatedData = {
+      status,
+    };
+
+    const updateLog = await prisma.movementLog.update({
+      where: {
+        userId: new ObjectId(userId),
+        id: new ObjectId(movementLogId),
+      },
+      data: updatedData,
+    });
+
+    console.log(updateLog);
+
+    return res.status(200).json({
+      message: "Successfully updated movement log",
+      data: updateLog,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
+export { createNewMovementLog, viewMovementLog, updateMovementLog };
