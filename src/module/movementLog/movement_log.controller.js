@@ -73,4 +73,26 @@ const createNewMovementLog = async (req, res) => {
   }
 };
 
-export { createNewMovementLog };
+// View all the movement log -- Employee
+const viewMovementLog = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const allMovementLog = await prisma.movementLog.findMany({
+      where: {
+        userId: new ObjectId(userId),
+      },
+    });
+
+    return res.status(200).json({
+      message: "Successfully fetched all the movement logs",
+      data: allMovementLog,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
+export { createNewMovementLog, viewMovementLog };
