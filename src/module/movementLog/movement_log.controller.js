@@ -128,4 +128,38 @@ const updateMovementLog = async (req, res) => {
   }
 };
 
-export { createNewMovementLog, viewMovementLog, updateMovementLog };
+// View all movement logs of team mates by manager
+const viewAllMovementLogManager = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const allMovementLogs = await prisma.movementLog.findMany({
+      where: {
+        managerId: new ObjectId(userId),
+      },
+    });
+
+    if (!allMovementLogs || allMovementLogs.length === 0) {
+      return res.status(400).json({
+        message: "No Movement log found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "All Movement logs has been fetched successfully",
+      data: allMovementLogs,
+    });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
+export {
+  createNewMovementLog,
+  viewMovementLog,
+  updateMovementLog,
+  viewAllMovementLogManager,
+};
