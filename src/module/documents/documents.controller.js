@@ -93,4 +93,4 @@ const updateDocInfo = async (req, res) => {
   }
 };
 
-export { uploadDocuments };
+export { uploadDocuments, updateDocInfo };
