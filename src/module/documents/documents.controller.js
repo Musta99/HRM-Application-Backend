@@ -72,6 +72,18 @@ const updateDocInfo = async (req, res) => {
       description,
     };
 
+    const doc = await prisma.documents.findUnique({
+      where: {
+        id: new ObjectId(docId),
+      },
+    });
+
+    if (doc.userId !== userId) {
+      return res.status(400).json({
+        message: "You are unauthorized to do this task",
+      });
+    }
+
     // if this documents belongs to you, only then you can update it
     const document = await prisma.documents.update({
       where: {
@@ -110,8 +122,6 @@ const deleteDocument = async (req, res) => {
         message: "You are unauthorized to do this task",
       });
     }
-
-    console.log(doc);
 
     const deletedDoc = await prisma.documents.delete({
       where: {
