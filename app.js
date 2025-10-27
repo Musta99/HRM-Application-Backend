@@ -1,14 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-
 import employeeRoutes from "./src/module/auth/employee.routes.js";
 import userRoutes from "./src/module/user/users.routes.js";
 import leaveRoutes from "./src/module/leave/leave.routes.js";
 import taskRoutes from "./src/module/task/task.routes.js";
 import loanRoutes from "./src/module/loan/loan.routes.js";
 import movementRoutes from "./src/module/movementLog/movement_log.routes.js";
-import uploadDocRoutes from "./src/module/documents/documents.controller.js";
+import uploadDocRoutes from "./src/module/documents/documents.routes.js";
 
 dotenv.config();
 const app = express();

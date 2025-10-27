@@ -244,6 +244,7 @@ model Documents{
   userId    String    @db.ObjectId
   title     String
   description String
+  document  String
   date      DateTime  @default(now())
   docFormat String
   docSize   String
