@@ -132,19 +132,22 @@ const updateMovementLog = async (req, res) => {
 const viewAllMovementLogManager = async (req, res) => {
   try {
     const userId = req.user.id;
+    const { employeeId } = req.query;
+    const filter = {
+      managerId: new ObjectId(userId),
+    };
 
+    if (employeeId) {
+      filter.userId = new ObjectId(employeeId);
+    }
     const allMovementLogs = await prisma.movementLog.findMany({
-      where: {
-        managerId: new ObjectId(userId),
-      },
+      where: filter,
     });
-
     if (!allMovementLogs || allMovementLogs.length === 0) {
       return res.status(400).json({
         message: "No Movement log found",
       });
     }
-
     return res.status(200).json({
       message: "All Movement logs has been fetched successfully",
       data: allMovementLogs,
