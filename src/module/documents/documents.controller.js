@@ -113,16 +113,16 @@ const deleteDocument = async (req, res) => {
 
     console.log(doc);
 
-    // const deletedDoc = await prisma.documents.delete({
-    //   where: {
-    //     id: new ObjectId(docId),
-    //     userId: new ObjectId(userId),
-    //   },
-    // });
+    const deletedDoc = await prisma.documents.delete({
+      where: {
+        id: new ObjectId(docId),
+        userId: new ObjectId(userId),
+      },
+    });
 
-    // return res.status(200).json({
-    //   message: "Succesfully deleted the document",
-    // });
+    return res.status(200).json({
+      message: "Succesfully deleted the document",
+    });
   } catch (err) {
     console.log("Some Error occured", err);
     return res.status(500).json({
@@ -131,4 +131,4 @@ const deleteDocument = async (req, res) => {
   }
 };
 
-export { uploadDocuments, updateDocInfo };
+export { uploadDocuments, updateDocInfo, deleteDocument };

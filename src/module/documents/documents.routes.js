@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { authMiddleware } from "../../middleware/authMiddleware.js";
-import { uploadDocuments, updateDocInfo } from "./documents.controller.js";
+import {
+  uploadDocuments,
+  updateDocInfo,
+  deleteDocument,
+} from "./documents.controller.js";
 import { upload } from "../../middleware/multer.middleware.js";
 
 const router = Router();
@@ -18,5 +22,5 @@ router.post(
 );
 
 router.put("/update/:docId", authMiddleware, updateDocInfo);
-
+router.delete("/delete/:docId", authMiddleware, deleteDocument);
 export default router;
