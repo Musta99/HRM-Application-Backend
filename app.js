@@ -8,6 +8,7 @@ import leaveRoutes from "./src/module/leave/leave.routes.js";
 import taskRoutes from "./src/module/task/task.routes.js";
 import loanRoutes from "./src/module/loan/loan.routes.js";
 import movementRoutes from "./src/module/movementLog/movement_log.routes.js";
+import uploadDocRoutes from "./src/module/documents/documents.controller.js";
 
 dotenv.config();
 const app = express();
@@ -34,5 +35,8 @@ app.use("/api/loans", loanRoutes);
 
 // Movement Log Management Route
 app.use("/api/movement", movementRoutes);
+
+// Document Upload Section
+app.use("/api/documentUpload", uploadDocRoutes);
 
 export default app;
