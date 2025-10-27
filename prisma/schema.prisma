@@ -126,6 +126,7 @@ model User {
   loanApproval  LoanManagement[] @relation("LoanApproval")
   movementLogCreator MovementLog[] @relation("movementLogCreator")
   movementLogViewer  MovementLog[] @relation("movementLogViewer")
+  documentUploader   Documents[] @relation("uploadedBy")
 }
 
 
@@ -234,4 +235,22 @@ model MovementLog{
 
 }
 
+
+// --------------------------------------
+// Official documents Model
+// --------------------------------------
+model Documents{
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String    @db.ObjectId
+  title     String
+  description String
+  date      DateTime  @default(now())
+  docFormat String
+  docSize   String
+  docType   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  employee  User      @relation("uploadedBy", fields: [userId], references: [id])
+}
 
