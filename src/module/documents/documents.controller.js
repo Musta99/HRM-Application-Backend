@@ -8,8 +8,10 @@ import fs from "fs";
 const uploadDocuments = async (req, res) => {
   try {
     const userId = req.user.id;
-    // const { title, description, uploadedBy } = req.body;
+    const { title, description, docType } = req.body;
     let document = null;
+    let docFormat;
+    let docSize;
     const user = await prisma.user.findUnique({
       where: {
         id: new ObjectId(userId),
@@ -27,18 +29,31 @@ const uploadDocuments = async (req, res) => {
       });
     }
     const docPath = req.files?.document?.[0]?.path;
-    const { size } = fs.statSync(docPath);
-    const fileSizeInKB = (size / 1024).toFixed(2);
 
-    const fileExt = docPath.split(".").pop().split("-")[0];
-    console.log(fileExt);
-    console.log("File Size: ", fileSizeInKB);
-    console.log("File path:", docPath);
+    if (docPath) {
+      const { size } = fs.statSync(docPath);
+      docSize = (size / 1024).toFixed(2);
+      docFormat = docPath.split(".").pop().split("-")[0];
 
-    // if (docPath) {
-    //   const uploadResult = await uploadToCloudinary(docPath);
-    //   console.log(uploadResult);
-    // }
+      const uploadResult = await uploadToCloudinary(docPath);
+      document = uploadResult.url;
+    }
+
+    const uploadedDoc = await prisma.documents.create({
+      data: {
+        title,
+        description,
+        userId,
+        document,
+        docFormat,
+        docSize,
+        docType,
+      },
+    });
+
+    return res.status(201).json({
+      message: "Document has been uploaded successfully",
+    });
 
     console.log(user);
   } catch (err) {
