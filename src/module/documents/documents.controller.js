@@ -93,4 +93,42 @@ const updateDocInfo = async (req, res) => {
   }
 };
 
+// Delete a document
+const deleteDocument = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { docId } = req.params;
+
+    const doc = await prisma.documents.findUnique({
+      where: {
+        id: new ObjectId(docId),
+      },
+    });
+
+    if (doc.userId !== userId) {
+      return res.status(400).json({
+        message: "You are unauthorized to do this task",
+      });
+    }
+
+    console.log(doc);
+
+    // const deletedDoc = await prisma.documents.delete({
+    //   where: {
+    //     id: new ObjectId(docId),
+    //     userId: new ObjectId(userId),
+    //   },
+    // });
+
+    // return res.status(200).json({
+    //   message: "Succesfully deleted the document",
+    // });
+  } catch (err) {
+    console.log("Some Error occured", err);
+    return res.status(500).json({
+      message: `Some Error occured: ${err}`,
+    });
+  }
+};
+
 export { uploadDocuments, updateDocInfo };
